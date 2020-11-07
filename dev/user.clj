@@ -24,6 +24,13 @@
    (shadow/watch build-id)
    (shadow/nrepl-select build-id)))
 
+(defn cljs-connect
+  ([]
+   (cljs-connect :app))
+  ([build-id]
+   (wait-for-cljs build-id)
+   (shadow/nrepl-select build-id)))
+
 (defn browse [port]
   (browse/browse-url (str "http://localhost:" port)))
 

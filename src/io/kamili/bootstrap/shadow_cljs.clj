@@ -14,9 +14,9 @@
       (shadow/watch build watch-opts)))
   config)
 
-(defmethod ig/suspend-key! :io.kamili.bootstrap/shadow-cljs [_ {:keys [builds _watch-opts] :as _config}]
-  (doseq [build builds]
-    (shadow/stop-worker build)))
+ (defmethod ig/suspend-key! :io.kamili.bootstrap/shadow-cljs [_ {:keys [builds _watch-opts] :as _config}]
+   (doseq [build builds]
+     (shadow/stop-worker build)))
 
 (defmethod ig/resume-key :io.kamili.bootstrap/shadow-cljs [_ {:keys [builds watch-opts] :as config} _ _]
   (doseq [build builds]
