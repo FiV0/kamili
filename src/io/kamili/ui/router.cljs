@@ -1,12 +1,14 @@
 (ns io.kamili.ui.router
   (:require [io.kamili.ui.routes :as routes]
             [integrant.core :as ig]
-            [lambdaisland.glogi :as log]
+            ;; [lambdaisland.glogi :as log]
             [re-frame.core :as re-frame]
             [reitit.core :as reitit]
             [reitit.frontend :as rf]
             [reitit.frontend.easy :as rfe]
-            [reitit.frontend.history :as rfh]))
+            [reitit.frontend.history :as rfh]
+            [io.kamili.logging :as log]))
+
 
 (def router (rf/router routes/routes))
 

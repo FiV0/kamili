@@ -38,7 +38,12 @@
  {:dev
   {:extra-paths ["dev"]
    :extra-deps {binaryage/devtools {:mvn/version "0.9.11"}
-                org.clojure/tools.deps.alpha {:mvn/version "0.8.677", :exclusions [org.slf4j/slf4j-nop]}}}
+                ;; org.clojure/tools.deps.alpha {:git/url "https://github.com/clojure/tools.deps.alpha"
+                ;;                               :tag "add-lib"
+                ;;                               :sha "d492e97259c013ba401c5238842cd3445839d020"
+                ;;                               :exclusions [org.slf4j/slf4j-nop]}
+                org.clojure/tools.deps.alpha {:mvn/version "0.8.677", :exclusions [org.slf4j/slf4j-nop]}
+                }}
 
   :test
   {:extra-deps {lambdaisland/kaocha      {:mvn/version "RELEASE"}

@@ -3,7 +3,6 @@
             [integrant.core :as ig]
             [io.kamili.server.routes]
             [io.kamili.server.transit :as transit]
-            [io.pedestal.log :as log]
             [muuntaja.core :as muuntaja]
             [reitit.coercion.malli]
             [reitit.core]
@@ -58,7 +57,6 @@
 (def last-exception (volatile! nil))
 
 (defn make-router [{:keys [routes]}]
-  (log/info :make-router {:routes routes})
   (ring/router routes
                {:expand (fn [route-args opts]
                           (reitit.core/expand route-args opts))
@@ -95,8 +93,6 @@
                                     multipart-mw/multipart-middleware]}}))
 
 (defn start! [{:keys [router http-server-opts]}]
-  (log/info :start! {:router router
-                     :http-server-opts http-server-opts})
   (immutant/run (ring/ring-handler router (ring-default-handler))
     http-server-opts))
 
@@ -104,8 +100,6 @@
   (immutant/stop inst))
 
 (defmethod ig/init-key :io.kamili.http/router [_ config]
-  (log/info :kamili.http/router
-            {:router-config (update config :routes #(reduce into %))})
   (make-router (update config :routes #(reduce into %))))
 
 (defmethod ig/init-key :io.kamili.http/server [_ config]
