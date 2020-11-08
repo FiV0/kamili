@@ -5,7 +5,10 @@
             [io.kamili.views]
             [re-frame.core :as re-frame]
             [reagent.dom :as reagent-dom]
-            [lambdaisland.glogi :as log]))
+            [lambdaisland.glogi :as log]
+            [io.kamili.ui.events]
+            [io.kamili.ui.subs]
+            ))
 
 (defonce system (atom nil))
 

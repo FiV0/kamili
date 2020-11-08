@@ -9,6 +9,6 @@
      {:name :nav/results
       :view :kamili.ui/results}]]
    ["/person"
-    ["/" ; add :person-id
+    ["/:id"
      {:name :nav/person
       :view :kamili.ui/person}]]])
