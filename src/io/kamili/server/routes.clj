@@ -2,7 +2,23 @@
   (:require [integrant.core :as ig]
             [io.kamili.server.views :as views]
             [io.kamili.ui.routes :as routes]
+            [io.kamili.handlers.auth :as auth]
+            [io.kamili.handlers.db :as db]
+            [io.kamili.logging :as log]
+            [reitit.coercion.malli]
             [hiccup2.core :as hiccup]))
+
+;; routes only for the backend
+(def routes
+  [["/api"
+    ["/person/:id"
+     {:interceptors [auth/authorized?]
+      :get {:parameters {:path [:map [:id int?]]}
+            :handler (fn [{:keys [uri] {:keys [path]} :parameters :as ctx}]
+                       (log/info :api-person-id ctx)
+                       {:status 200
+                        :body   (assoc (db/get-person (:id path))
+                                       :uri uri)})}}]]])
 
 (defn frontend-response [req]
   {:status 200
@@ -22,7 +38,7 @@
           [] routes))
 
 (defmethod ig/init-key :io.kamili.server/routes [_ _]
-  (into []
+  (into routes
         (map (fn [[path _]]
                [path {:get frontend-response}]))
         (flatten-routes routes/routes)))

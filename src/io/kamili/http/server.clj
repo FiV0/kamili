@@ -15,7 +15,8 @@
             [ring.middleware.anti-forgery :as csrf-mw]
             [ring.middleware.keyword-params :as keyword-params-mw]
             [ring.middleware.session :as session-mw]
-            [ring.util.response])
+            [ring.util.response]
+            [io.kamili.logging :as log])
   (:import [java.util UUID]))
 
 (set! *warn-on-reflection* true)
@@ -105,5 +106,5 @@
 (defmethod ig/init-key :io.kamili.http/server [_ config]
   (start! config))
 
-(defmethod ig/halt-key! :io.kamili.http/server [_ _inst]
-  #_(stop! inst))
+(defmethod ig/halt-key! :io.kamili.http/server [_ inst]
+  (stop! inst))
