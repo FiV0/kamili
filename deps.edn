@@ -21,7 +21,8 @@
 
          ;; Frontend
          org.clojure/clojurescript {:mvn/version "1.10.764"}
-         re-frame/re-frame {:mvn/version "1.1.1"}
+         re-frame/re-frame         {:mvn/version "1.1.1"}
+         day8.re-frame/http-fx     {:mvn/version "v0.2.0"}
          datascript/datascript     {:mvn/version "0.18.10"} ;; TODO needed?
          metosin/reitit-frontend   {:mvn/version "0.4.2"}
          thheller/shadow-cljs      {:mvn/version "2.11.5"}
@@ -38,11 +39,12 @@
  {:dev
   {:extra-paths ["dev"]
    :extra-deps {binaryage/devtools {:mvn/version "0.9.11"}
-                ;; org.clojure/tools.deps.alpha {:git/url "https://github.com/clojure/tools.deps.alpha"
-                ;;                               :tag "add-lib"
-                ;;                               :sha "d492e97259c013ba401c5238842cd3445839d020"
-                ;;                               :exclusions [org.slf4j/slf4j-nop]}
-                org.clojure/tools.deps.alpha {:mvn/version "0.8.677", :exclusions [org.slf4j/slf4j-nop]}
+                org.clojure/tools.deps.alpha {:git/url "https://github.com/clojure/tools.deps.alpha"
+                                              :tag "add-lib3"
+                                              :sha "adb9bb47c7954cd32310ffcb5d128a736e5a495d"
+                                              :exclusions [org.slf4j/slf4j-nop]}
+                vvvvalvalval/scope-capture {:mvn/version "0.3.2"}
+                ;; org.clojure/tools.deps.alpha {:mvn/version "0.8.677", :exclusions [org.slf4j/slf4j-nop]}
                 }}
 
   :test

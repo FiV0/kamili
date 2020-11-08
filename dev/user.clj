@@ -35,7 +35,7 @@
   (browse/browse-url (str "http://localhost:" port)))
 
 (defn set-prep! []
-  (repl/set-prep! (bootstrap/set-prep! :dev)))
+  (bootstrap/set-prep! :dev))
 
 (defn go []
   (set-prep!)
