@@ -1,5 +1,21 @@
 (ns io.kamili.view.results
-  (:require [io.kamili.view :as view]))
+  (:require [io.kamili.view :as view]
+            [io.kamili.logging :as log]
+            [re-frame.core :as rf]))
 
-(defmethod io.kamili.view/route-view :kamili.ui/results [_match]
-  [:div [:h1 "Results"]])
+(defn results [{:keys [path] :as _match}]
+  (let [[tag res] @(rf/subscribe [:api/query path])]
+    (log/info :kamili.ui/results {:path path :tag tag :res res})
+    (case tag
+      :loading [:div [:h1 "Loading..."]]
+      :error [:div [:h1 "Error!" [:pre (pr-str res)]]]
+      :result (into [:div]
+                    (-> (map (fn [person]
+                               [:a
+                                {:href "#"
+                                 :on-click #(rf/dispatch [:navigate-to [:nav/person {:id (:id person)}]])}
+                                (str "Name: " (:name person))]) res)
+                        (interleave (repeat [:br])))))))
+
+(defmethod io.kamili.view/route-view :kamili.ui/results [match]
+  [results match])

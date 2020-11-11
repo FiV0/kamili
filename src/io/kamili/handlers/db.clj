@@ -1,5 +1,6 @@
 (ns io.kamili.handlers.db
-  (:require [io.kamili.logging :as log]))
+  (:require [clojure.string :as str]
+            [io.kamili.logging :as log]))
 
 ;; an artifial db, mapping :person-id to some data of that person
 ;; you should replace this with a proper database
@@ -18,5 +19,10 @@
       :profession "Computer Scientist"}})
 
 (defn get-person [id]
-  (log/info :get-person {:id id})
   (get db id))
+
+(defn search [needle]
+  (let [needle (str/lower-case needle)]
+    (->> db
+         (filter (fn [[_ v]] (str/includes? (str/lower-case (:name v)) needle)))
+         (map second))))

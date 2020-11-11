@@ -14,11 +14,16 @@
     ["/person/:id"
      {:interceptors [auth/authorized?]
       :get {:parameters {:path [:map [:id int?]]}
-            :handler (fn [{:keys [uri] {:keys [path]} :parameters :as ctx}]
-                       (log/info :api-person-id ctx)
+            :handler (fn [{:keys [uri] {:keys [path]} :parameters :as _ctx}]
                        {:status 200
                         :body   (assoc (db/get-person (:id path))
-                                       :uri uri)})}}]]])
+                                       :uri uri)})}}]
+    ["/results/:search"
+     {:interceptors [auth/authorized?]
+      :get {:parameters {:path [:map [:search string?]]}
+            :handler (fn [{{:keys [path]} :parameters :as _ctx}]
+                       {:status 200
+                        :body (db/search (:search path))})}}]]])
 
 (defn frontend-response [req]
   {:status 200

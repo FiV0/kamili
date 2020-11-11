@@ -5,7 +5,7 @@
     {:name :nav/search
      :view :kamili.ui/search}]
    ["/results"
-    ["/" ; add :search
+    ["/:search"
      {:name :nav/results
       :view :kamili.ui/results}]]
    ["/person"

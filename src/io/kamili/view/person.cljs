@@ -1,8 +1,7 @@
 (ns io.kamili.view.person
   (:require [io.kamili.view :as view]
             [io.kamili.logging :as log]
-            [re-frame.core :as rf]
-            [re-frame.db]))
+            [re-frame.core :as rf]))
 
 (defn person [{:keys [path] :as _match}]
   (let [[tag res] @(rf/subscribe [:api/query path])]
