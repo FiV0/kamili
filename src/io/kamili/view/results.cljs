@@ -10,11 +10,11 @@
       :loading [:div [:h1 "Loading..."]]
       :error [:div [:h1 "Error!" [:pre (pr-str res)]]]
       :result (into [:div]
-                    (-> (map (fn [person]
+                    (-> (map (fn [{:keys [name id] :as _person}]
                                [:a
                                 {:href "#"
-                                 :on-click #(rf/dispatch [:navigate-to [:nav/person {:id (:id person)}]])}
-                                (str "Name: " (:name person))]) res)
+                                 :on-click #(rf/dispatch [:navigate-to [:nav/person {:id id}]])}
+                                (str "Name: " name)]) res)
                         (interleave (repeat [:br])))))))
 
 (defmethod io.kamili.view/route-view :kamili.ui/results [match]
