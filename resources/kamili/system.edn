@@ -1,9 +1,12 @@
-#merge [{[:io.kamili.server/routes] {}
-         :io.kamili.http/router {:routes #ig/refset :io.kamili.server/routes
-                                 ;; :websocket #ig/ref :kamili.http/websocket
-                                 }
+#merge [{:io.kamili.server/type #_:reitit :pedestal
+         :io.kamili.server/routes {:type #ig/ref :io.kamili.server/type}
+         :io.kamili.http/router {:routes #ig/ref :io.kamili.server/routes
+                                 :type #ig/ref :io.kamili.server/type
+                                 ;; relevant for pedestal
+                                 :http-server-opts {:port 8280 :host "0.0.0.0"}}
          :io.kamili.http/server {:http-server-opts {:port 8280 :host "0.0.0.0"}
-                                 :router #ig/ref :io.kamili.http/router}}
+                                 :router #ig/ref :io.kamili.http/router
+                                 :type #ig/ref :io.kamili.server/type}}
 
 
         #profile {:dev {:io.kamili.bootstrap/shadow-cljs {:watch-opts {:autobuild true :verbose false}

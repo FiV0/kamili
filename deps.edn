@@ -16,6 +16,12 @@
          org.immutant/immutant   {:mvn/version "2.1.10" :exclusions [org.jboss.naming/jnpserver]}
          hiccup/hiccup {:mvn/version "2.0.0-alpha2"}
 
+         ;; TODO decide on pedestal vs standalone ring
+         io.pedestal/pedestal.route         {:mvn/version "0.5.8"}
+         io.pedestal/pedestal.jetty         {:mvn/version "0.5.8"}
+         io.pedestal/pedestal.service       {:mvn/version "0.5.8"}
+         io.pedestal/pedestal.service-tools {:mvn/version "0.5.8"}
+
          ;; utility
          lambdaisland/uri {:mvn/version "1.4.54"} ;; TODO needed?
 

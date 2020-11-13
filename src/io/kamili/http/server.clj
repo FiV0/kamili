@@ -1,11 +1,13 @@
 (ns io.kamili.http.server
   (:require [immutant.web :as immutant]
             [integrant.core :as ig]
+            [io.kamili.logging :as log]
             [io.kamili.server.routes]
             [io.kamili.server.transit :as transit]
             [muuntaja.core :as muuntaja]
             [reitit.coercion.malli]
             [reitit.core]
+            [reitit.interceptor.sieppari :as sieppari]
             [reitit.ring :as ring]
             [reitit.ring.coercion :as rrc]
             [reitit.ring.middleware.exception :as exception-mw]
@@ -15,8 +17,11 @@
             [ring.middleware.anti-forgery :as csrf-mw]
             [ring.middleware.keyword-params :as keyword-params-mw]
             [ring.middleware.session :as session-mw]
-            [ring.util.response]
-            [io.kamili.logging :as log])
+            [io.pedestal.http.params :as params]
+            [io.pedestal.interceptor :as interceptor]
+            [io.pedestal.interceptor.helpers :as interceptor-helpers]
+            [io.pedestal.http :as pedestal]
+            [ring.util.response])
   (:import [java.util UUID]))
 
 (set! *warn-on-reflection* true)
@@ -93,15 +98,80 @@
                                     rrc/coerce-request-middleware
                                     multipart-mw/multipart-middleware]}}))
 
-(defn start! [{:keys [router http-server-opts]}]
-  (immutant/run (ring/ring-handler router (ring-default-handler))
-    http-server-opts))
+(defn update-interceptors [interceptors]
+  (into
+   []
+   (map interceptor/interceptor)
+   (concat
+    interceptors
+    [params/keyword-params
+     params/keyword-body-params
+     params/keywordize-request-body-params
+     params/keywordize-request-params
+     (pedestal/transit-body-interceptor :transit-body-interceptor "application/transit+json;charset=UTF-8" :json)])))
 
-(defn stop! [inst]
-  (immutant/stop inst))
+;; (secure-headers/content-security-policy-header
+;;  {:object-src "'none'" :default-src "'self'"})
 
-(defmethod ig/init-key :io.kamili.http/router [_ config]
-  (make-router (update config :routes #(reduce into %))))
+(def default-response
+  "An interceptor that returns a 404 when routing failed to resolve a route."
+  (interceptor-helpers/after
+   ::not-found
+   (fn [context]
+     (if-not (pedestal/response? (:response context))
+       (assoc context :response (-> (ring.util.response/resource-response "public/404.html")
+                                    (ring.util.response/content-type "text/html;charset=UTF-8")))
+       context))))
+
+(defn add-interceptors [service-map]
+  (-> service-map
+      pedestal/default-interceptors
+      (update ::pedestal/interceptors update-interceptors)))
+
+(defn make-router-pedestal [{:keys [routes] {:keys [port]} :http-server-opts}]
+  (->
+   ;; move to integrant for adaptation
+   {:env                 :dev
+    ::pedestal/resource-path "public"
+    ::pedestal/type          :jetty
+    ::pedestal/port          port
+    ::pedestal/routes        routes
+    ::pedestal/secure-headers
+    {:content-security-policy-settings
+     {:object-src "*"
+      :default-src "* 'self'"
+      :child-src "*"
+      :script-src "* 'unsafe-inline' 'unsafe-eval'"
+      :worker-src "*"}}
+    ::pedestal/not-found-interceptor default-response
+    ;; TODO to dev
+    ::pedestal/join? false
+    ::pedestal/allowed-origins {:creds true :allowed-origins (constantly true)}
+    }
+   pedestal/default-interceptors
+   pedestal/dev-interceptors
+   add-interceptors))
+
+(defn start! [{:keys [router http-server-opts type]}]
+  {:server (if (= type :reitit)
+             (immutant/run (ring/ring-handler router (ring-default-handler)
+                                              {:executor sieppari/executor})
+               http-server-opts)
+             (let [server (pedestal/create-server router)]
+               (pedestal/start server)
+               server))
+   :type type})
+
+(defn stop! [{:keys [server type] :as inst}]
+  (if (= type :reitit)
+    (immutant/stop server)
+    (pedestal/stop server)))
+
+(defmethod ig/init-key :io.kamili.http/router [_ {:keys [type] :as config}]
+  ;; (make-router (update config :routes #(reduce into %)))
+  (if (= type :reitit)
+    (make-router config)
+    (make-router-pedestal config)))
 
 (defmethod ig/init-key :io.kamili.http/server [_ config]
   (start! config))
