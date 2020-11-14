@@ -13,7 +13,6 @@
             [hiccup2.core :as hiccup]))
 
 ;; routes only for the backend
-;; reitit
 (def routes
   [["/api"
     ["/person/:id"
@@ -45,6 +44,12 @@
                       [(str path p) r])))
           [] routes))
 
+(defmethod ig/init-key :io.kamili.server/routes [_ _]
+  (into routes
+        (map (fn [[path _]]
+               [path {:get frontend-response}]))
+        (flatten-routes routes/routes)))
+
 ;; pedestal
 (defn api-person
   [req]
@@ -56,7 +61,6 @@
   [req]
   {:status 200
    :body (db/search (get-in req [:path-params :search]))})
-
 
 (def routes2
   ;; interceptor vs simple response
@@ -76,14 +80,7 @@
                 (flatten-routes routes/routes))
           table/table-routes))
 
-(defmethod ig/init-key :io.kamili.server/routes [_ {:keys [type]}]
-  (if (= type :reitit)
-    (into routes
-          (map (fn [[path _]]
-                 [path {:get frontend-response}]))
-          (flatten-routes routes/routes))
-    (service-tools.dev/watch-routes-fn #'app)))
-
-(defmethod ig/init-key :io.kamili.server/type [_ type]
-  (log/info ::type {:type type})
-  type)
+(defmethod ig/init-key :io.kamili.server/pedestal-routes [_ {:keys [autoreload]}]
+  (if autoreload
+    (service-tools.dev/watch-routes-fn #'app)
+    app))

@@ -1,12 +1,22 @@
-#merge [{:io.kamili.server/type #_:reitit :pedestal
-         :io.kamili.server/routes {:type #ig/ref :io.kamili.server/type}
-         :io.kamili.http/router {:routes #ig/ref :io.kamili.server/routes
-                                 :type #ig/ref :io.kamili.server/type
-                                 ;; relevant for pedestal
-                                 :http-server-opts {:port 8280 :host "0.0.0.0"}}
+#merge [{:io.kamili.server/routes {}
+         :io.kamili.http/router {:routes #ig/ref :io.kamili.server/routes}
          :io.kamili.http/server {:http-server-opts {:port 8280 :host "0.0.0.0"}
                                  :router #ig/ref :io.kamili.http/router
-                                 :type #ig/ref :io.kamili.server/type}}
+                                 :pedestal-router #ig/ref  :io.kamili.http/pedestal-router
+                                 ;; switch here between pedestal and reitit
+                                 :type :reitit #_:pedestal}
+
+         ;; pedestal
+         :io.kamili.server/pedestal-routes {:autoreload #profile {:dev true :default false}}
+         :io.kamili.http/system-map {:env                             #profile {:dev :dev :prod :prod}
+                                     :io.pedestal.http/join?          false
+                                     :io.pedestal.http/type           :jetty
+                                     :io.pedestal.http/resource-path  "public"
+                                     :io.pedestal.http/port           8280
+                                     :io.pedestal.http/routes         #ig/ref  :io.kamili.server/pedestal-routes
+                                     :io.pedestal.http/secure-headers nil}
+
+         :io.kamili.http/pedestal-router {:system-map #ig/ref :io.kamili.http/system-map}}
 
 
         #profile {:dev {:io.kamili.bootstrap/shadow-cljs {:watch-opts {:autobuild true :verbose false}
