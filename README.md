@@ -20,12 +20,18 @@ clj -A:dev -r
 then simply run
 ```clj
 (user/go)
-(user/connect-repl)
 ```
+If you want to connect to a cljs repl you can run the following
+afterwards
+```clj
+(shadow/repl :app)
+```
+
+The app is then available at [http://localhost:8280](http://localhost:8280).
 
 ### Emacs
 If you are using cider, you can simply do `clj-jack-in-clj&cljs` which automatically
-runs the above two commands.
+runs the above commands.
 
 ## What's in the box?
 
@@ -46,7 +52,7 @@ for routing.
 The second is using [pedestal](https://github.com/pedestal/pedestal).
 
 The main differenc between the two setups is that the first uses
-middlewares and second uses interceptors. I wanted to test both of
+middleware and second uses interceptors. I wanted to test both of
 these and haven't decided on which one makes writing request/response
 handling easier.
 You can switch between these two options in the [edn file](resources/kamili/system.edn)
@@ -69,7 +75,6 @@ have to remember the details.
 ### Tests
 
 ### Dev
-
 
 ## License
 
