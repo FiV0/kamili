@@ -1,8 +1,7 @@
 (ns io.kamili.view)
 
 (defmulti route-view
-  (fn [match]
-    (some-> match :data :view)))
+  (fn [view _] view))
 
-(defmethod route-view :default [match]
-  [:div "unsupported route " (pr-str match)])
+(defmethod route-view :default [view _data]
+  [:div "unsupported route " view])

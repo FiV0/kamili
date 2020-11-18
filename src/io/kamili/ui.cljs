@@ -1,14 +1,13 @@
 (ns io.kamili.ui
   (:require [integrant.core :as ig]
+            [io.kamili.ui.events]
             [io.kamili.ui.router :as router]
+            [io.kamili.ui.subs]
             [io.kamili.view :as view]
             [io.kamili.views]
-            [re-frame.core :as re-frame]
-            [reagent.dom :as reagent-dom]
             [lambdaisland.glogi :as log]
-            [io.kamili.ui.events]
-            [io.kamili.ui.subs]
-            ))
+            [re-frame.core :as re-frame]
+            [reagent.dom :as reagent-dom]))
 
 (defonce system (atom nil))
 
@@ -34,8 +33,9 @@
 
 (defn app []
   [:<>
-   (let [match @(re-frame/subscribe [::view])]
-     (view/route-view match))])
+   (let [{:keys [path] :as match} @(re-frame/subscribe [::view])
+         data @(re-frame/subscribe [:api/query path])]
+     [:div.m-5 (view/route-view (some-> match :data :view) data)])])
 
 (defn ^:export ^:dev/after-load main []
   (init! config)
