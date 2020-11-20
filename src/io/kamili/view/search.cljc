@@ -6,9 +6,12 @@
                  [re-com.core :refer [input-text]]]))
   #?(:cljs (:require-macros [re-com.core :refer [handler-fn]])))
 
-(defn search-page []
-  #?(:clj [:input {:type "search"}]
-     :cljs
+#?(:clj
+   (defn search-page []
+     [:input {:type "search" :placeholder "Search..."}])
+
+   :cljs
+   (defn search-page []
      (let [query (reagent/atom "")]
        (fn []
          [input-text
@@ -24,5 +27,8 @@
                  :placeholder "Search..."}
           :change-on-blur? false]))))
 
+
+
 (defmethod io.kamili.view/route-view :kamili.ui/search [_match _]
-  [search-page])
+  #?(:clj (search-page)
+     :cljs [search-page]))

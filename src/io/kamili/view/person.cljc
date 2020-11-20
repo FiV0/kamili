@@ -13,4 +13,4 @@
              [:h4 "Profession: " (:profession res)]]))
 
 (defmethod io.kamili.view/route-view :kamili.ui/person [_view data]
-  [person data])
+  (person data))

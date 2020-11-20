@@ -18,4 +18,4 @@
                       (interleave (repeat [:br]))))))
 
 (defmethod io.kamili.view/route-view :kamili.ui/results [_ data]
-  [results data])
+  (results data))
