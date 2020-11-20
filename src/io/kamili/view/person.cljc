@@ -1,7 +1,6 @@
 (ns io.kamili.view.person
   (:require [io.kamili.view :as view]
-            [io.kamili.logging :as log]
-            [re-frame.core :as rf]))
+            [io.kamili.logging :as log]))
 
 (defn person [[tag res]]
   (log/info :kamili.ui/person {:tag tag :res res})

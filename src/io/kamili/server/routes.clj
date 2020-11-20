@@ -12,21 +12,6 @@
             [reitit.coercion.spec]
             [hiccup2.core :as hiccup]))
 
-;; routes only for the backend
-(def routes
-  [["/api"
-    ["/person/:id"
-     {:get {:parameters {:path [:map [:id int?]]}
-            :handler (fn [{:keys [uri] {:keys [path]} :parameters :as _ctx}]
-                       {:status 200
-                        :body   (assoc (db/get-person (:id path))
-                                       :uri uri)})}}]
-    ["/results/:search"
-     {:get {:parameters {:path [:map [:search string?]]}
-            :handler (fn [{{:keys [path]} :parameters :as _ctx}]
-                       {:status 200
-                        :body (db/search (:search path))})}}]]])
-
 (defn frontend-response [req]
   {:status 200
    :body (-> req
@@ -45,10 +30,15 @@
           [] routes))
 
 (defmethod ig/init-key :io.kamili.server/routes [_ _]
-  (into routes
-        (map (fn [[path _]]
-               [path {:get frontend-response}]))
-        (flatten-routes routes/routes)))
+  (let [flattened-routes (flatten-routes routes/routes)
+        frontend-routes (map (fn [[path _]]
+                               [path {:get frontend-response}])
+                             flattened-routes)
+        api-routes (->> flattened-routes
+                        (filter #(-> % second :handler))
+                        (map (fn [[path route-data]]
+                               [(str "/api" path) {:get (select-keys route-data [:parameters :handler])}])))]
+    (into [] (concat frontend-routes api-routes))))
 
 ;; pedestal
 (defn api-person
@@ -63,7 +53,6 @@
    :body (db/search (get-in req [:path-params :search]))})
 
 (def routes2
-  ;; interceptor vs simple response
   [["/api/person/:id"
     :get [auth/authorized? api-person]
     :route-name :api-person]
