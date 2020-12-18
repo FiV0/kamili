@@ -7,7 +7,7 @@
             [reitit.frontend :as rf]
             [reitit.frontend.easy :as rfe]
             [reitit.frontend.history :as rfh]
-            [io.kamili.logging :as log]))
+            [io.kamili.log :as log]))
 
 
 (def router (rf/router routes/routes))

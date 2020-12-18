@@ -1,6 +1,6 @@
 (ns io.kamili.handlers.db
   (:require [clojure.string :as str]
-            [io.kamili.logging :as log]))
+            [io.kamili.log :as log]))
 
 ;; an artifial db, mapping :person-id to some data of that person
 ;; you should replace this with a proper database

@@ -1,6 +1,6 @@
 (ns io.kamili.view.results
   (:require [io.kamili.view :as view]
-            [io.kamili.logging :as log]
+            [io.kamili.log :as log]
             [re-frame.core :as rf]))
 
 (defn results [[tag res]]

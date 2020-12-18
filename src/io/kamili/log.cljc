@@ -1,6 +1,6 @@
-(ns io.kamili.logging
+(ns io.kamili.log
   (:refer-clojure :exclude [case])
-  #?(:cljs (:require-macros [io.kamili.logging]))
+  #?(:cljs (:require-macros [io.kamili.log]))
   (:require [lambdaisland.glogi :as glogi]
             #?(:clj [io.pedestal.log :as pedestal])
             #?(:cljs [lambdaisland.glogi.console :as glogi-console])))

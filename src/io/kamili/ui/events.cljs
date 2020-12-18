@@ -1,6 +1,6 @@
 (ns io.kamili.ui.events
   (:require [ajax.core :as ajax]
-            [io.kamili.logging :as log]
+            [io.kamili.log :as log]
             [re-frame.core :as re-frame]
             [day8.re-frame.http-fx]))
 

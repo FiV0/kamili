@@ -4,7 +4,7 @@
             [io.kamili.ui.routes :as routes]
             [io.kamili.handlers.auth :as auth]
             [io.kamili.handlers.db :as db]
-            [io.kamili.logging :as log]
+            [io.kamili.log :as log]
             [reitit.coercion.malli]
             [io.pedestal.http :as pedestal]
             [io.pedestal.http.route.definition.table :as table]

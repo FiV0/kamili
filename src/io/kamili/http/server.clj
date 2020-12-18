@@ -2,7 +2,7 @@
   (:require [immutant.web :as immutant]
             [integrant.core :as ig]
             [io.kamili.http.pedestal.server] ;; for integrant
-            [io.kamili.logging :as log]
+            [io.kamili.log :as log]
             [io.kamili.server.routes]
             [io.kamili.server.transit :as transit]
             [io.pedestal.http :as pedestal]

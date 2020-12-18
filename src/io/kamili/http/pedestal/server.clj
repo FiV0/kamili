@@ -1,6 +1,6 @@
 (ns io.kamili.http.pedestal.server
   (:require [integrant.core :as ig]
-            [io.kamili.logging :as log]
+            [io.kamili.log :as log]
             [io.kamili.server.routes]
             [io.pedestal.http :as pedestal]
             [io.pedestal.http.params :as params]
