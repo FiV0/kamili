@@ -1,5 +1,4 @@
-(ns io.kamili.ui.routes
-  (:require #?(:clj [io.kamili.handlers.db :as db])))
+(ns io.kamili.ui.routes)
 
 (def routes
   [["/"
@@ -8,16 +7,8 @@
    ["/results"
     ["/:search"
      {:name :nav/results
-      :view :kamili.ui/results
-      :parameters {:path [:map [:search string?]]}
-      #?@(:clj [:handler (fn [{{:keys [path]} :parameters :as _ctx}]
-                           {:status 200
-                            :body (db/search (:search path))})])}]]
+      :view :kamili.ui/results}]]
    ["/person"
     ["/:id"
      {:name :nav/person
-      :view :kamili.ui/person
-      :parameters {:path [:map [:id int?]]}
-      #?@(:clj [:handler (fn [{{:keys [path]} :parameters :as _ctx}]
-                           {:status 200
-                            :body   (db/get-person (:id path))})])}]]])
+      :view :kamili.ui/person}]]])

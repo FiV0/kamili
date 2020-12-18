@@ -1,7 +1,7 @@
 (ns io.kamili.view.results
   (:require [io.kamili.view :as view]
             [io.kamili.logging :as log]
-            #?(:cljs [re-frame.core :as rf])))
+            [re-frame.core :as rf]))
 
 (defn results [[tag res]]
   (log/info :kamili.ui/results {:tag tag :res res})
@@ -11,9 +11,8 @@
     :result (into [:div]
                   (-> (map (fn [{:keys [name id] :as _person}]
                              [:a
-                              #?(:cljs
-                                 {:href "#"
-                                  :on-click #(rf/dispatch [:navigate-to [:nav/person {:id id}]])})
+                              {:href "#"
+                               :on-click #(rf/dispatch [:navigate-to [:nav/person {:id id}]])}
                               (str "Name: " name)]) res)
                       (interleave (repeat [:br]))))))
 
