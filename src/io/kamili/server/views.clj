@@ -1,6 +1,6 @@
 (ns io.kamili.server.views)
 
-(defn layout [req app & body]
+(defn layout [req & body]
   [:html
    [:head
     [:meta {:charset "UTF-8"}]
@@ -31,9 +31,9 @@
       code .function-symbol {color: #8959a8;}
       code .tag {color: #a3685a;}
       code .insertion {color: #718c00;}
-      code .deletion {color: #c82829;}")]]
+      code .deletion {color: #c82829;}"
+      )]]
    (into [:body
-          [:div#app
-           app]
+          [:div#app]
           [:script {:src "/js/compiled/app.js" :type "text/javascript"}]]
          body)])
