@@ -16,7 +16,6 @@
             [reitit.ring.middleware.multipart :as multipart-mw]
             [reitit.ring.middleware.muuntaja :as muuntaja-mw]
             [reitit.ring.middleware.parameters :as parameters-mw]
-            [ring.middleware.anti-forgery :as csrf-mw]
             [ring.middleware.keyword-params :as keyword-params-mw]
             [ring.middleware.session :as session-mw]
             [ring.util.response])
@@ -28,10 +27,6 @@
 (def wrap-keyword-params
   {:name ::keyword-params
    :wrap keyword-params-mw/wrap-keyword-params})
-
-(def wrap-anti-forgery
-  {:name ::anti-forgery
-   :wrap csrf-mw/wrap-anti-forgery})
 
 (def wrap-session
   {:name ::session
@@ -76,8 +71,7 @@
                                      ;; malli options
                                      :options          nil})
                        :muuntaja   muuntaja-instance
-                       :middleware [;; wrap-anti-forgery ;; XXX Disabled to make api requests work (incoming postmark)
-                                    wrap-session
+                       :middleware [wrap-session
                                     wrap-uid
                                     parameters-mw/parameters-middleware     ;; query-params & form-params
                                     wrap-keyword-params                     ;; keywordize keys in :params map, does not touch :*-params
