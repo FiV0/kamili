@@ -1,4 +1,4 @@
-(ns io.kamili.http.pedestal.server
+(ns io.kamili.pedestal.server
   (:require [integrant.core :as ig]
             [io.kamili.log :as log]
             [io.kamili.server.routes]
@@ -37,12 +37,12 @@
       pedestal/default-interceptors
       (update ::pedestal/interceptors update-interceptors)))
 
-(defmethod ig/init-key :io.kamili.http/system-map [_ system-map]
+(defmethod ig/init-key :io.kamili.pedestal.server/system-map [_ system-map]
   (assoc system-map
          ::pedestal/allowed-origins {:creds true :allowed-origins (constantly true)}
          ::pedestal/not-found-interceptor default-response))
 
-(defmethod ig/init-key :io.kamili.http/pedestal-router [_ {:keys [system-map]}]
+(defmethod ig/init-key :io.kamili.pedestal.server/pedestal-router [_ {:keys [system-map]}]
   (-> system-map
       pedestal/default-interceptors
       pedestal/dev-interceptors

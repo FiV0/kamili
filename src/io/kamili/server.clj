@@ -1,7 +1,7 @@
-(ns io.kamili.http.server
+(ns io.kamili.server
   (:require [immutant.web :as immutant]
             [integrant.core :as ig]
-            [io.kamili.http.pedestal.server] ;; for integrant
+            [io.kamili.pedestal.server] ;; for integrant
             [io.kamili.log :as log]
             [io.kamili.server.routes]
             [io.kamili.server.transit :as transit]
@@ -109,11 +109,11 @@
     (immutant/stop server)
     (pedestal/stop server)))
 
-(defmethod ig/init-key :io.kamili.http/router [_ config]
+(defmethod ig/init-key :io.kamili.server/router [_ config]
   (make-router config))
 
-(defmethod ig/init-key :io.kamili.http/server [_ config]
+(defmethod ig/init-key :io.kamili.server/server [_ config]
   (start! config))
 
-(defmethod ig/halt-key! :io.kamili.http/server [_ inst]
+(defmethod ig/halt-key! :io.kamili.server/server [_ inst]
   (stop! inst))
