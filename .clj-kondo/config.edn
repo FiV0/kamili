@@ -11,4 +11,4 @@
                                          (cljs.test/is [match?])
                                          (clojure.test/is [match?])
                                          (clojure.core.match/match)]}
-           :unused-namespace {:exclude [io.kamili.logging]}}}
+           :unused-namespace {:exclude [io.kamili.log]}}}
