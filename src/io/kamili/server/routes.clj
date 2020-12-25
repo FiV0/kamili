@@ -12,6 +12,8 @@
   [["/api"
     ["/person/:id"
      {:get {:parameters {:path [:map [:id int?]]}
+            ;; example interceptor
+            :interceptors [auth/authorized?]
             :handler (fn [{:keys [uri] {:keys [path]} :parameters :as _ctx}]
                        {:status 200
                         :body   (assoc (db/get-person (:id path))
