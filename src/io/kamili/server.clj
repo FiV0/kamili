@@ -1,100 +1,171 @@
 (ns io.kamili.server
-  (:require [immutant.web :as immutant]
+  (:require [cheshire.core :as cheshire]
             [integrant.core :as ig]
             [io.kamili.log :as log]
             [io.kamili.server.routes]
             [io.kamili.server.transit :as transit]
-            [muuntaja.core :as muuntaja]
-            [reitit.coercion.malli]
+            [io.pedestal.http :as server]
+            [io.pedestal.http.body-params :as body-params]
+            [io.pedestal.http.content-negotiation :as content-negotiation]
+            [io.pedestal.http.params :as http.params]
+            [io.pedestal.http.ring-middlewares :as http.ring-middleware]
+            [io.pedestal.interceptor :as interceptor]
+            [reitit.coercion.malli :as malli]
             [reitit.core]
-            [reitit.interceptor.sieppari :as sieppari]
+            [reitit.http :as http]
+            [reitit.http.coercion :as coercion]
+            [reitit.pedestal :as pedestal]
             [reitit.ring :as ring]
-            [reitit.ring.coercion :as rrc]
-            [reitit.ring.middleware.exception :as exception-mw]
-            [reitit.ring.middleware.multipart :as multipart-mw]
-            [reitit.ring.middleware.muuntaja :as muuntaja-mw]
-            [reitit.ring.middleware.parameters :as parameters-mw]
-            [ring.middleware.keyword-params :as keyword-params-mw]
-            [ring.middleware.session :as session-mw]
-            [ring.util.response])
+            [ring.middleware.params]
+            [ring.util.response :as response])
   (:import [java.util UUID]))
 
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 
-(def wrap-keyword-params
-  {:name ::keyword-params
-   :wrap keyword-params-mw/wrap-keyword-params})
-
-(def wrap-session
-  {:name ::session
-   :wrap session-mw/wrap-session})
-
-(def wrap-uid
-  {:name ::uid
-   :wrap
-   (fn [handler]
-     (fn [req]
-       (handler
-        (if (get-in req [:session :uid])
-          req
-          (update req :session assoc :uid (str (UUID/randomUUID)))))))})
-
-(def muuntaja-instance
-  (-> muuntaja/default-options
-      (update-in [:formats "application/transit+json" :encoder-opts] merge transit/encoder-opts)
-      (update-in [:formats "application/transit+json" :decoder-opts] merge transit/decoder-opts)
-      muuntaja/create))
-
 (defn ring-default-handler []
   (ring/routes (ring/create-resource-handler {:path "/"})
                (ring/create-default-handler
-                {:not-found (constantly (ring.util.response/resource-response "public/404.html"))})))
+                {:not-found (constantly (assoc (ring.util.response/resource-response "public/404.html")
+                                               :status 404))})))
 
-(def last-exception (volatile! nil))
+(def formats
+  ;; ordering matters here, html should come first
+  {:html    {:extension    #"\.html$"
+             :content-type "text/html"}
+   :transit {:extension    #"\.transit$"
+             :content-type "application/transit+json"}
+   :json    {:extension    #"\.transit$"
+             :content-type "application/json"}})
+
+(def negotiate-content-interceptor
+  (let [supported-content-types (map :content-type (vals formats))]
+    (content-negotiation/negotiate-content supported-content-types)))
+
+(defn accepted-type
+  [context]
+  (get-in context [:request :accept :field] "text/plain"))
+
+(defn transform-content
+  [body content-type]
+  (case content-type
+    "text/html"        body
+    "text/plain"       body
+    "application/edn"  (pr-str body)
+    "application/json" (cheshire/encode body)
+    "application/transit+json" (transit/encode body)))
+
+(defn coerce-to
+  [response content-type]
+  (-> response
+      (update :body transform-content content-type)
+      (assoc-in [:headers "Content-Type"] content-type)))
+
+(defn- response-complete?
+  "Is this response already complete? i.e. has a status, body, and content-type?
+  If so we don't touch it, to stay out of the way of handlers that do their own
+  rendering."
+  [{:keys [response]}]
+  (and (:status response)
+       (:body response)
+       (get-in response [:headers "Content-Type"])))
+
+(def body-params-interceptor
+  (body-params/body-params
+   (body-params/default-parser-map :transit-options [{:handlers transit/read-handlers}])))
+
+(def transit-and-form-params-as-body-params-interceptor
+  {:name ::transit-and-form-params-as-body-params-interceptor
+   :enter
+   (fn [context]
+     (let [transit-params (-> context :request :transit-params http.params/keywordize-keys)
+           form-params (get-in context [:request :form-params])]
+       (-> context
+           (assoc-in [:request :body-params] (merge transit-params form-params)))))})
+
+(def coerce-body
+  {:name ::coerce-body
+   :leave
+   (fn [context]
+     (cond-> context
+       (not (response-complete? context))
+       (update-in [:response] coerce-to (accepted-type context))))})
+
+(def root-interceptor
+  {:name :root
+   :leave
+   (fn [context]
+     ;; for now for debug only to inspect context at the very last interceptor
+     context)})
+
+(defn ensure-session-uid [req]
+  (if (get-in req [:session :uid])
+    req
+    (update req :session assoc :uid (str (UUID/randomUUID)))))
+
+(defn wrap-ensure-session-uid [handler]
+  (fn [req]
+    (handler (ensure-session-uid req))))
+
+(def ensure-session-uid-interceptor
+  {:name ::ensure-session-uid
+   :enter
+   (fn [context]
+     (update context :request ensure-session-uid))})
+
+(defn add-interceptors [interceptors]
+  (into
+   []
+   (map interceptor/interceptor)
+   (concat interceptors
+           [root-interceptor
+            coerce-body
+            body-params-interceptor
+            http.params/keyword-params
+            transit-and-form-params-as-body-params-interceptor
+            (http.ring-middleware/session)
+            ensure-session-uid-interceptor
+            negotiate-content-interceptor])))
+
+(defn start! [{:keys [router http-server-opts websocket url]}]
+  (let [s (-> {::server/type :jetty
+               ::server/port (:port http-server-opts)
+               ::server/host (:host http-server-opts)
+               ::server/join? false
+
+               ::server/request-logger nil
+
+               ::server/secure-headers nil
+
+               ;; no pedestal routes
+               ::server/routes []}
+
+              server/default-interceptors
+              (update ::server/interceptors pop) ;; remove pedestal router, added last by default-interceptors
+
+              (update ::server/interceptors add-interceptors)
+
+              ;; use the reitit router
+              (update ::server/interceptors conj
+                      (pedestal/routing-interceptor router (ring-default-handler) {:interceptors []}))
+
+              server/dev-interceptors
+              server/create-server)]
+    (server/start s)))
+
+(defn stop! [inst]
+  (server/stop inst))
 
 (defn make-router [{:keys [routes]}]
-  (ring/router routes
-               {:expand (fn [route-args opts]
-                          (reitit.core/expand route-args opts))
-                :data {:coercion   (reitit.coercion.malli/create
-                                    {;; set of keys to include in error messages
-                                     :error-keys       #{#_:type :coercion :in :schema :value :errors :humanized #_:transformed}
-                                     ;; ;; schema identity function (default: close all map schemas)
-                                     ;; :compile mu/closed-schema
-                                     ;; strip-extra-keys (affects only predefined transformers)
-                                     :strip-extra-keys false #_true
-                                     ;; add/set default values
-                                     :default-values   true
-                                     ;; malli options
-                                     :options          nil})
-                       :muuntaja   muuntaja-instance
-                       :middleware [wrap-session
-                                    wrap-uid
-                                    parameters-mw/parameters-middleware     ;; query-params & form-params
-                                    wrap-keyword-params                     ;; keywordize keys in :params map, does not touch :*-params
-                                    muuntaja-mw/format-negotiate-middleware ;; content-negotiation
-                                    muuntaja-mw/format-response-middleware  ;; encoding response body
-                                    (exception-mw/create-exception-middleware
-                                     {::exception-mw/default (fn [^Exception e _]
-                                                               (vswap! last-exception (constantly e))
-                                                               {:status 500
-                                                                :body {:type "exception"
-                                                                       :class (.getName (.getClass e))
-                                                                       :message (.getMessage e)
-                                                                       :trace (map str (.getStackTrace e))}})})
-                                    muuntaja-mw/format-request-middleware   ;; decoding request body
-                                    rrc/coerce-response-middleware
-                                    rrc/coerce-request-middleware
-                                    multipart-mw/multipart-middleware]}}))
-
-(defn start! [{:keys [router http-server-opts]}]
-  (immutant/run (ring/ring-handler router (ring-default-handler)
-                                   {:executor sieppari/executor})
-    http-server-opts))
-
-(defn stop! [server]
-  (immutant/stop server))
+  (http/router
+   routes
+   ;; the request/response coercion somehow needs to be plugged in here
+   ;; as the coercion interceptors are not compatible with pedestal
+   {:data {:coercion malli/coercion
+           :interceptors [;; coercing response bodys
+                          (coercion/coerce-response-interceptor)
+                          ;; coercing request parameters
+                          (coercion/coerce-request-interceptor)]}}))
 
 (defmethod ig/init-key :io.kamili.server/router [_ config]
   (make-router config))

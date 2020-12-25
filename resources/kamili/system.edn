@@ -1,4 +1,4 @@
-#merge [{:io.kamili.server/routes {}
+#merge [{:io.kamili.server/routes {:autoreload true}
          :io.kamili.server/router {:routes #ig/ref :io.kamili.server/routes}
          :io.kamili.server/server {:http-server-opts {:port 8280 :host "0.0.0.0"}
                                    :router #ig/ref :io.kamili.server/router}}

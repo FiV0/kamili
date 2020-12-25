@@ -1,13 +1,11 @@
 (ns io.kamili.server.routes
-  (:require [integrant.core :as ig]
-            [io.kamili.server.views :as views]
-            [io.kamili.ui.routes :as routes]
+  (:require [hiccup2.core :as hiccup]
+            [integrant.core :as ig]
             [io.kamili.handlers.auth :as auth]
             [io.kamili.handlers.db :as db]
             [io.kamili.log :as log]
-            [reitit.coercion.malli]
-            [reitit.coercion.spec]
-            [hiccup2.core :as hiccup]))
+            [io.kamili.server.views :as views]
+            [io.kamili.ui.routes :as routes]))
 
 ;; routes only for the backend
 (def routes

@@ -12,9 +12,11 @@
          ring/ring-defaults      {:mvn/version "0.3.2"}
          metosin/muuntaja        {:mvn/version "0.6.7"}
          metosin/reitit          {:mvn/version "0.5.5"}
+         metosin/reitit-pedestal {:mvn/version "0.5.10"}
          metosin/reitit-sieppari {:mvn/version "0.5.5"} ;; TODO needed?
          org.immutant/immutant   {:mvn/version "2.1.10" :exclusions [org.jboss.naming/jnpserver]}
          hiccup/hiccup {:mvn/version "2.0.0-alpha2"}
+         cheshire/cheshire       {:mvn/version "5.10.0"}
 
          ;; TODO decide on pedestal vs standalone ring
          io.pedestal/pedestal.route         {:mvn/version "0.5.8"}
