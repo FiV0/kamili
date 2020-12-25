@@ -54,6 +54,9 @@
      (re-frame/dispatch [:nav new-match]))
    {:use-fragment false}))
 
+(defn api-route? [path]
+  (-> (rf/match-by-path router path) :data :api))
+
 (comment
   (rf/match-by-name router :nav/search)
 

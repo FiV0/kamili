@@ -43,7 +43,6 @@
 
 (defmethod ig/init-key :io.kamili.server/routes [_ _]
   (into routes
-
         (map (fn [[path _]]
                [path {:get frontend-response}]))
         (flatten-routes routes/routes)))
