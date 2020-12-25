@@ -6,9 +6,6 @@
             [io.kamili.handlers.db :as db]
             [io.kamili.log :as log]
             [reitit.coercion.malli]
-            [io.pedestal.http :as pedestal]
-            [io.pedestal.http.route.definition.table :as table]
-            [io.pedestal.service-tools.dev :as service-tools.dev]
             [reitit.coercion.spec]
             [hiccup2.core :as hiccup]))
 
@@ -46,41 +43,7 @@
 
 (defmethod ig/init-key :io.kamili.server/routes [_ _]
   (into routes
+
         (map (fn [[path _]]
                [path {:get frontend-response}]))
         (flatten-routes routes/routes)))
-
-;; pedestal
-(defn api-person
-  [req]
-  (let [id (Integer/parseInt (get-in req [:path-params :id] 1))]
-    {:status 200
-     :body (db/get-person id)}))
-
-(defn api-results
-  [req]
-  {:status 200
-   :body (db/search (get-in req [:path-params :search]))})
-
-(def routes2
-  ;; interceptor vs simple response
-  [["/api/person/:id"
-    :get [auth/authorized? api-person]
-    :route-name :api-person]
-   ["/api/results/:search"
-    :get [auth/authorized? api-results]
-    :route-name :api-results]])
-
-(def app (->
-          (into routes2
-                (map (fn [[path _]]
-                       [path
-                        :get [pedestal/html-body frontend-response]
-                        :route-name (keyword path)]))
-                (flatten-routes routes/routes))
-          table/table-routes))
-
-(defmethod ig/init-key :io.kamili.server/pedestal-routes [_ {:keys [autoreload]}]
-  (if autoreload
-    (service-tools.dev/watch-routes-fn #'app)
-    app))

@@ -1,11 +1,9 @@
 (ns io.kamili.server
   (:require [immutant.web :as immutant]
             [integrant.core :as ig]
-            [io.kamili.pedestal.server] ;; for integrant
             [io.kamili.log :as log]
             [io.kamili.server.routes]
             [io.kamili.server.transit :as transit]
-            [io.pedestal.http :as pedestal]
             [muuntaja.core :as muuntaja]
             [reitit.coercion.malli]
             [reitit.core]
@@ -90,18 +88,13 @@
                                     rrc/coerce-request-middleware
                                     multipart-mw/multipart-middleware]}}))
 
-(defn start! [{:keys [router pedestal-router http-server-opts type]}]
-  {:server (if (= type :reitit)
-             (immutant/run (ring/ring-handler router (ring-default-handler)
-                                              {:executor sieppari/executor})
-               http-server-opts)
-             (-> pedestal-router pedestal/create-server pedestal/start))
-   :type type})
+(defn start! [{:keys [router http-server-opts]}]
+  (immutant/run (ring/ring-handler router (ring-default-handler)
+                                   {:executor sieppari/executor})
+    http-server-opts))
 
-(defn stop! [{:keys [server type] :as _inst}]
-  (if (= type :reitit)
-    (immutant/stop server)
-    (pedestal/stop server)))
+(defn stop! [server]
+  (immutant/stop server))
 
 (defmethod ig/init-key :io.kamili.server/router [_ config]
   (make-router config))
@@ -109,5 +102,5 @@
 (defmethod ig/init-key :io.kamili.server/server [_ config]
   (start! config))
 
-(defmethod ig/halt-key! :io.kamili.server/server [_ inst]
-  (stop! inst))
+(defmethod ig/halt-key! :io.kamili.server/server [_ server]
+  (stop! server))
