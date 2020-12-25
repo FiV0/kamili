@@ -80,7 +80,7 @@
                 (flatten-routes routes/routes))
           table/table-routes))
 
-(defmethod ig/init-key :io.kamili.server/pedestal-routes [_ {:keys [autoreload]}]
-  (if autoreload
-    (service-tools.dev/watch-routes-fn #'app)
-    app))
+;; (defmethod ig/init-key :io.kamili.server/pedestal-routes [_ {:keys [autoreload]}]
+;;   (if autoreload
+;;     (service-tools.dev/watch-routes-fn #'app)
+;;     app))
