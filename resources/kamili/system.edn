@@ -2,6 +2,7 @@
          :io.kamili.server/router {:routes #ig/ref :io.kamili.server/routes}
          :io.kamili.server/server {:http-server-opts {:port 8280 :host "0.0.0.0"}
                                    :router #ig/ref :io.kamili.server/router}}
+
         #profile {:dev {:io.kamili.bootstrap/shadow-cljs {:watch-opts {:autobuild true :verbose false}
                                                           :builds [:app]}}}
         ]

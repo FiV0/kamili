@@ -7,8 +7,10 @@
    ["/results"
     ["/:search"
      {:name :nav/results
-      :view :kamili.ui/results}]]
+      :view :kamili.ui/results
+      :api true}]]
    ["/person"
     ["/:id"
      {:name :nav/person
-      :view :kamili.ui/person}]]])
+      :view :kamili.ui/person
+      :api true}]]])

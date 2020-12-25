@@ -34,7 +34,7 @@
 (defn app []
   [:<>
    (let [{:keys [path] :as match} @(re-frame/subscribe [::view])
-         data @(re-frame/subscribe [:api/query path])]
+         data (when (router/api-route? path) @(re-frame/subscribe [:api/query path]))]
      [:div.m-5 (view/route-view (some-> match :data :view) data)])])
 
 (defn ^:export ^:dev/after-load main []

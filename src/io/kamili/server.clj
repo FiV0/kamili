@@ -173,5 +173,5 @@
 (defmethod ig/init-key :io.kamili.server/server [_ config]
   (start! config))
 
-(defmethod ig/halt-key! :io.kamili.server/server [_ inst]
-  (stop! inst))
+(defmethod ig/halt-key! :io.kamili.server/server [_ server]
+  (stop! server))
