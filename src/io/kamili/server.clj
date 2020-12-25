@@ -1,31 +1,23 @@
 (ns io.kamili.server
-  (:require [clojure.string :as str]
-            [cheshire.core :as cheshire]
+  (:require [cheshire.core :as cheshire]
+            [integrant.core :as ig]
             [io.kamili.log :as log]
             [io.kamili.server.routes]
-            [io.kamili.server.routes]
             [io.kamili.server.transit :as transit]
-            [integrant.core :as ig]
             [io.pedestal.http :as server]
             [io.pedestal.http.body-params :as body-params]
             [io.pedestal.http.content-negotiation :as content-negotiation]
             [io.pedestal.http.params :as http.params]
             [io.pedestal.http.ring-middlewares :as http.ring-middleware]
             [io.pedestal.interceptor :as interceptor]
-            [io.pedestal.interceptor.chain :as interceptor.chain]
-            [reitit.coercion.malli]
+            [reitit.coercion.malli :as malli]
             [reitit.core]
             [reitit.http :as http]
+            [reitit.http.coercion :as coercion]
             [reitit.pedestal :as pedestal]
             [reitit.ring :as ring]
-            [ring.middleware.anti-forgery :as csrf-mw]
-            [ring.middleware.keyword-params :as keyword-params-mw]
             [ring.middleware.params]
-            [ring.middleware.session :as session-mw]
-            [ring.middleware.session.cookie :as session-cookie]
-            [ring.util.response :as response]
-            )
-
+            [ring.util.response :as response])
   (:import [java.util UUID]))
 
 (set! *warn-on-reflection* true)
@@ -165,7 +157,15 @@
   (server/stop inst))
 
 (defn make-router [{:keys [routes]}]
-  (http/router routes))
+  (http/router
+   routes
+   ;; the request/response coercion somehow needs to be plugged in here
+   ;; as the coercion interceptors are not compatible with pedestal
+   {:data {:coercion malli/coercion
+           :interceptors [;; coercing response bodys
+                          (coercion/coerce-response-interceptor)
+                          ;; coercing request parameters
+                          (coercion/coerce-request-interceptor)]}}))
 
 (defmethod ig/init-key :io.kamili.server/router [_ config]
   (make-router config))
