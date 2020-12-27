@@ -5,6 +5,14 @@
 Kamili is supposed to become a Clojure(script) fullstack template. Currently it
 is more of an exploration project.
 
+The app is a Single Page Application with frontend as well as backend routes.
+It simply defines a little search interface for some well known CS people.
+
+![](kamili_show.gif)
+
+These views should probably adapted to your own needs, but give you a nice
+starting point.
+
 ## Usage
 
 Install the npm modules
@@ -45,18 +53,12 @@ post.
 
 ### Server side
 
-There are currently two options to run the server.
-The default is using [immutant](https://github.com/immutant/immutant),
-[ring](https://github.com/ring-clojure/ring) and [reitit](https://github.com/metosin/reitit)
-for routing.
-The second is using [pedestal](https://github.com/pedestal/pedestal).
+The current setup uses a combination of [pedestal](https://github.com/pedestal/pedestal)
+and [reitit](https://github.com/metosin/reitit). Mainly to have interceptors from pedestal
+and reitit for routing as well as [malli](https://github.com/metosin/malli) for parameter
+coercing.
 
-The main differenc between the two setups is that the first uses
-middleware and second uses interceptors. I wanted to test both of
-these and haven't decided on which one makes writing request/response
-handling easier.
-You can switch between these two options in the [edn file](resources/kamili/system.edn)
-by toggling the `:reitit`/`:pedestal` option.
+This setup is not set in stone and might still change a bit.
 
 ### Frontend
 
@@ -75,6 +77,12 @@ have to remember the details.
 ### Tests
 
 ### Dev
+
+The extra dev dependencies include a version of
+[tools.deps.alpha](https://github.com/clojure/tools.deps.alpha) that includes
+`add-lib` as well as [scope-capture](https://github.com/vvvvalvalval/scope-capture).
+Scope-capture is especially helpful when you are setting up your backend
+handling and want to inspect the context at some point.
 
 ## License
 
