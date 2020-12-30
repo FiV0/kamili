@@ -57,7 +57,8 @@
                                               :tag "add-lib3"
                                               :sha "adb9bb47c7954cd32310ffcb5d128a736e5a495d"
                                               :exclusions [org.slf4j/slf4j-nop]}
-                vvvvalvalval/scope-capture {:mvn/version "0.3.2"}}}
+                vvvvalvalval/scope-capture {:mvn/version "0.3.2"}
+                fiv0/kusonga  {:mvn/version "0.1.0"}}}
 
   :test
   {:extra-deps {lambdaisland/kaocha      {:mvn/version "RELEASE"}
