@@ -1,9 +1,7 @@
-app/resources/public/js/compiled/**
-app/package-lock.json
-app/yarn.lock
-app/yarn-error.log
-app/node_modules
-app/.clj-kondo/.cache
-app/.shadow-cljs/
-app/.cpcache/
-app/.nrepl-port
+resources/app/resources/public/js/compiled/**
+resources/app/package-lock.json
+resources/app/yarn.lock
+resources/app/yarn-error.log
+resources/app/node_modules
+resources/app/.clj-kondo/.cache
+resources/app/.shadow-cljs/
