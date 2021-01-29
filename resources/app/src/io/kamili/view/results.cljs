@@ -4,7 +4,7 @@
             [re-frame.core :as rf]))
 
 (defn results [[tag res]]
-  (log/info :kamili.ui/results {:tag tag :res res})
+  (log/info :io.kamili.ui/results {:tag tag :res res})
   (case tag
     :loading [:div [:h1 "Loading..."]]
     :error [:div [:h1 "Error!" [:pre (pr-str res)]]]
@@ -16,5 +16,5 @@
                               (str "Name: " name)]) res)
                       (interleave (repeat [:br]))))))
 
-(defmethod io.kamili.view/route-view :kamili.ui/results [_ data]
+(defmethod io.kamili.view/route-view :io.kamili.ui/results [_ data]
   [results data])
