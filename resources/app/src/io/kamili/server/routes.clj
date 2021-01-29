@@ -1,5 +1,6 @@
 (ns io.kamili.server.routes
-  (:require [hiccup2.core :as hiccup]
+  (:require [clojure.string :as str]
+            [hiccup2.core :as hiccup]
             [integrant.core :as ig]
             [io.kamili.handlers.auth :as auth]
             [io.kamili.handlers.db :as db]
@@ -24,10 +25,18 @@
                        {:status 200
                         :body (db/search (:search path))})}}]]])
 
+;; FIXME: This is just a cheap hack to make the template work with
+;; renaming of namespaces. (script-entrypoint) can be replaced with
+;; a static string similar to "you.awesome.app.ui.main()".
+(def script-entrypoint
+  (let [ns-str (str *ns*)]
+    (str (subs ns-str 0 (str/last-index-of ns-str ".server.routes"))
+         ".ui.main()")))
+
 (defn frontend-response [req]
   {:status 200
    :body (-> req
-             (views/layout [:script "io.kamili.ui.main()"])
+             (views/layout [:script script-entrypoint])
              hiccup/html
              str)})
 
