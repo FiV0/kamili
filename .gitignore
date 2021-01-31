@@ -5,3 +5,7 @@ resources/app/yarn-error.log
 resources/app/node_modules
 resources/app/.clj-kondo/.cache
 resources/app/.shadow-cljs/
+resources/app/test.log
+.clj-kondo/.cache
+.cpcache
+my-app/**

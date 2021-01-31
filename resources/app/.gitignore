@@ -1,0 +1,9 @@
+/resources/public/js/compiled/**
+package-lock.json
+yarn.lock
+yarn-error.log
+/node_modules
+.clj-kondo/.cache
+.shadow-cljs/
+.cpcache/
+.nrepl-port
