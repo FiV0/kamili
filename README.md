@@ -13,6 +13,28 @@ It simply defines a little search interface for some well known CS people.
 These views should probably adapted to your own needs, but give you a nice
 starting point.
 
+## Template creation
+
+Currently the template is not yet on Clojars. You will first need to clone this directory.
+
+Secondely, you need to have [`clj-new`](https://github.com/seancorfield/clj-new) on your classpath. For example if your
+`~/.clojure/deps.edn` contains the following alias
+```
+:aliases
+{...
+ :clj-new {:extra-deps {seancorfield/clj-new
+                        {:mvn/version "1.1.234"}}
+           :exec-fn clj-new/create}
+}
+```
+and you have cloned the repository to the folder kamili, then you can create a new project with
+```bash
+   clojure -Sdeps '{:deps {kamili/kamili-app {:local/root "kamili"}}}' -X:clj-new :template kamili-app :name com.awesome/my-app
+```
+
+If you just want to mess around with the code you can also go directly to the `resources/app` subfolder
+of the cloned kamili directory and start the app from there.
+
 ## Usage
 
 Install the npm modules

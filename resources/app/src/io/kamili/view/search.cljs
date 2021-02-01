@@ -21,5 +21,5 @@
               :placeholder "Search..."}
        :change-on-blur? false])))
 
-(defmethod io.kamili.view/route-view :kamili.ui/search [_match _]
+(defmethod io.kamili.view/route-view :io.kamili.ui/search [_match _]
   [search-page])

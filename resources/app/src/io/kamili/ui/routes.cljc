@@ -3,14 +3,14 @@
 (def routes
   [["/"
     {:name :nav/search
-     :view :kamili.ui/search}]
+     :view :io.kamili.ui/search}]
    ["/results"
     ["/:search"
      {:name :nav/results
-      :view :kamili.ui/results
+      :view :io.kamili.ui/results
       :api true}]]
    ["/person"
     ["/:id"
      {:name :nav/person
-      :view :kamili.ui/person
+      :view :io.kamili.ui/person
       :api true}]]])

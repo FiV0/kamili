@@ -1,0 +1,70 @@
+{:paths ["src" "test" "resources" "classes"]
+ :deps  {org.clojure/clojure         {:mvn/version "1.10.1"}
+         org.clojure/spec.alpha      {:mvn/version "0.2.187"}
+         com.cognitect/transit-clj   {:mvn/version "1.0.324"}
+         com.cognitect/transit-cljs  {:mvn/version "0.8.264"}
+
+         ;; Backend / system / routing
+         integrant/integrant     {:mvn/version "0.8.0"}
+         integrant/repl          {:mvn/version "0.3.2"}
+         aero/aero               {:mvn/version "1.1.6"}
+         cheshire/cheshire       {:mvn/version "5.10.0"}
+         ring/ring-defaults      {:mvn/version "0.3.2"}
+         metosin/reitit          {:mvn/version "0.5.5"}
+         metosin/reitit-pedestal {:mvn/version "0.5.10"}
+         hiccup/hiccup {:mvn/version "2.0.0-alpha2"}
+
+         ;; pedestal
+         io.pedestal/pedestal.route         {:mvn/version "0.5.8"}
+         io.pedestal/pedestal.jetty         {:mvn/version "0.5.8"}
+         io.pedestal/pedestal.service       {:mvn/version "0.5.8"}
+         io.pedestal/pedestal.service-tools {:mvn/version "0.5.8"}
+
+         ;; ring+reitit other branch
+         metosin/muuntaja        {:mvn/version "0.6.7"}
+         org.immutant/immutant   {:mvn/version "2.1.10" :exclusions [org.jboss.naming/jnpserver]}
+         metosin/reitit-sieppari {:mvn/version "0.5.5"} ;; TODO needed?
+
+         ;; utility
+         lambdaisland/uri {:mvn/version "1.4.54"} ;; TODO needed?
+
+         ;; Frontend
+         org.clojure/clojurescript {:mvn/version "1.10.764"}
+         re-frame/re-frame         {:mvn/version "1.1.1"}
+         day8.re-frame/http-fx     {:mvn/version "v0.2.0"}
+         metosin/reitit-frontend   {:mvn/version "0.4.2"}
+         thheller/shadow-cljs      {:mvn/version "2.11.5"}
+         lambdaisland/fetch        {:git/url "https://github.com/lambdaisland/fetch.git"
+                                    :sha     "ea584d5b2c1d81eec2fb208cfc7c8ba294e3370a"} ;; TODO needed?
+         devcards/devcards         {:mvn/version "0.2.6"}
+         re-com                    {:mvn/version "2.9.0"}
+
+         ;; logging
+         lambdaisland/glogi             {:mvn/version "1.0-60"}
+         io.pedestal/pedestal.log       {:mvn/version "0.5.7"}
+         ch.qos.logback/logback-classic {:mvn/version "1.2.3"}
+
+         ;; moving namespaces
+         ;; somehow this conflicts with shadow-cljs
+         ;; thomasa/mranderson         {:mvn/version "0.5.1" :exclusions [org.jboss.naming/jnpserver]}
+         }
+
+ :aliases
+ {:dev
+  {:extra-paths ["dev"]
+   :extra-deps {binaryage/devtools {:mvn/version "0.9.11"}
+                org.clojure/tools.deps.alpha {:git/url "https://github.com/clojure/tools.deps.alpha"
+                                              :tag "add-lib3"
+                                              :sha "adb9bb47c7954cd32310ffcb5d128a736e5a495d"
+                                              :exclusions [org.slf4j/slf4j-nop]}
+                vvvvalvalval/scope-capture {:mvn/version "0.3.2"}
+                fiv0/kusonga  {:mvn/version "0.1.0"}}}
+
+  :test
+  {:extra-deps {lambdaisland/kaocha      {:mvn/version "RELEASE"}
+                lambdaisland/kaocha-cljs {:mvn/version "RELEASE"}}}}
+
+ :mvn/repos
+ {"central"        {:url "https://repo1.maven.org/maven2/"}
+  "clojars"        {:url "https://clojars.org/repo"}
+  "my.datomic.com" {:url "https://my.datomic.com/repo"}}}
