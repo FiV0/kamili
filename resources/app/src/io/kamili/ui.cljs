@@ -11,7 +11,6 @@
             [re-frame.core :as re-frame]
             [reagent.dom :as reagent-dom]))
 
-
 (glogi-console/install!)
 
 (glogi/set-levels

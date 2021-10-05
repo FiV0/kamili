@@ -1,8 +1,8 @@
 {:paths ["src" "resources"]
- :deps  {org.clojure/clojure         {:mvn/version "1.10.3"}
-         seancorfield/clj-new        {:mvn/version "1.2.362"}
-         fiv0/kusonga                {:mvn/version "0.1.0"}
-         clj-commons/fs              {:mvn/version "1.6.307"}}
+ :deps  {org.clojure/clojure             {:mvn/version "1.10.3"}
+         com.github.seancorfield/clj-new {:mvn/version "1.2.362"}
+         fiv0/kusonga                    {:mvn/version "0.1.0"}
+         clj-commons/fs                  {:mvn/version "1.6.307"}}
 
  :aliases {}
 

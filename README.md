@@ -22,8 +22,8 @@ Secondely, you need to have [`clj-new`](https://github.com/seancorfield/clj-new)
 ```clj
 :aliases
 {...
- :clj-new {:extra-deps {seancorfield/clj-new
-                        {:mvn/version "1.1.234"}}
+ :clj-new {:extra-deps {com.github.seancorfield/clj-new
+                        {:mvn/version "1.2.362"}}
            :exec-fn clj-new/create}
 }
 ```

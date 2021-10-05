@@ -9,3 +9,4 @@ resources/app/test.log
 .clj-kondo/.cache
 .cpcache
 my-app/**
+.nrepl-port
