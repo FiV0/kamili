@@ -1,7 +1,6 @@
 (ns io.kamili.server
   (:require [cheshire.core :as cheshire]
             [integrant.core :as ig]
-            [io.kamili.log :as log]
             [io.kamili.server.routes]
             [io.kamili.server.transit :as transit]
             [io.pedestal.http :as server]
