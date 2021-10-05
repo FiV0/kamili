@@ -5,9 +5,24 @@
             [io.kamili.ui.subs]
             [io.kamili.view :as view]
             [io.kamili.views]
-            [lambdaisland.glogi :as log]
+            [lambdaisland.glogc :as log]
+            [lambdaisland.glogi :as glogi]
+            [lambdaisland.glogi.console :as glogi-console]
             [re-frame.core :as re-frame]
             [reagent.dom :as reagent-dom]))
+
+
+(glogi-console/install!)
+
+(glogi/set-levels
+ '{:glogi/root :debug
+   ;; io.kamili.ui.router :trace
+   goog.net.XhrIo :warn
+   re-frame :info
+   ;; See all dispatch/subscribe events
+   ;;re-frame.router :trace
+   ;;re-frame.subs   :trace
+   })
 
 (defonce system (atom nil))
 

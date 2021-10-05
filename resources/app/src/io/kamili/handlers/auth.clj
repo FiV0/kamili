@@ -1,5 +1,5 @@
 (ns io.kamili.handlers.auth
-  (:require [io.kamili.log :as log]))
+  (:require [lambdaisland.glogc :as log]))
 
 (def authorized?
   {:doc "Check whether the person has access to the requested resource."

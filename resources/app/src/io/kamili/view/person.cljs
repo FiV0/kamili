@@ -1,6 +1,6 @@
 (ns io.kamili.view.person
   (:require [io.kamili.view :as view]
-            [io.kamili.log :as log]
+            [lambdaisland.glogc :as log]
             [re-frame.core :as rf]))
 
 (defn person [[tag res]]

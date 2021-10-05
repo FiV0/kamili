@@ -4,9 +4,9 @@
             [integrant.core :as ig]
             [io.kamili.handlers.auth :as auth]
             [io.kamili.handlers.db :as db]
-            [io.kamili.log :as log]
             [io.kamili.server.views :as views]
-            [io.kamili.ui.routes :as routes]))
+            [io.kamili.ui.routes :as routes]
+            [lambdaisland.glogc :as log]))
 
 ;; routes only for the backend
 (def routes

@@ -1,8 +1,8 @@
 (ns io.kamili.ui.events
   (:require [ajax.core :as ajax]
-            [io.kamili.log :as log]
-            [re-frame.core :as re-frame]
-            [day8.re-frame.http-fx]))
+            [day8.re-frame.http-fx]
+            [lambdaisland.glogc :as log]
+            [re-frame.core :as re-frame]))
 
 (re-frame/reg-sub
  :http-error
